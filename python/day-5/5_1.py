@@ -32,7 +32,7 @@ def parseInput(input: List[str]) -> tuple[dict[int, List[int]], List[List[int]]]
 
 def checkValidUpdate(rules_dict: dict[int, List[int]], update: List[int]) -> bool:
     for i in range(len(update) - 1):
-        for j in update[i:]:
+        for j in update[i+1:]:
             if j not in rules_dict:
                 continue
 
