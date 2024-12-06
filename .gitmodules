@@ -1,0 +1,3 @@
+[submodule "rust-aoc-2024"]
+	path = rust-aoc-2024
+	url = git@github.com:MatthijsJWH/rust-aoc-2024.git
