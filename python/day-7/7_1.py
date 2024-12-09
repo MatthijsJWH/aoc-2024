@@ -1,5 +1,5 @@
 from typing import List
-from pprint import pprint as pprint
+# from pprint import pprint as pprint
 
 INPUT_FILE_NAME = "input.txt"
 
