@@ -1,7 +1,6 @@
 from typing import List, Dict, Set, Tuple
 from pprint import pprint as pprint
 
-
 def readInput() -> List[List[str]]:
     with open("input.txt", 'r') as f:
         lines = f.readlines()
@@ -36,7 +35,7 @@ def findAntinodesHelper(main_node: Tuple[int, int], other_nodes: List[Tuple[int,
                 antinodes.extend([(main_node[0] - diff_x, main_node[1] + diff_y), (node[0] + diff_x, node[1] - diff_y)])
 
             case False, True:
-                    antinodes.extend([(main_node[0] + diff_x, main_node[1] - diff_y), (node[0] - diff_x, node[1] + diff_y)])
+                antinodes.extend([(main_node[0] + diff_x, main_node[1] - diff_y), (node[0] - diff_x, node[1] + diff_y)])
 
             case False, False:
                 antinodes.extend([(main_node[0] + diff_x, main_node[1] + diff_y), (node[0] - diff_x, node[1] - diff_y)])
