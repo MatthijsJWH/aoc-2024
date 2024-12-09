@@ -1,14 +1,13 @@
-from typing import List, Dict
+from typing import List, Dict, Set, Tuple
 from pprint import pprint as pprint
-
 
 def readInput() -> List[List[str]]:
     with open("input.txt", 'r') as f:
         lines = f.readlines()
         return [list(line.strip()) for line in lines]
-    
-def parseInput(input) -> Dict[str, List[tuple[int, int]]]:
-    parsed_input = {}
+
+def parseInput(input: List[List[str]]) -> Dict[str, List[Tuple[int, int]]]:
+    parsed_input: Dict[str, List[Tuple[int, int]]] = {}
 
     for i, line in enumerate(input):
         for j, char in enumerate(line):
@@ -19,8 +18,8 @@ def parseInput(input) -> Dict[str, List[tuple[int, int]]]:
 
     return parsed_input
 
-def findAntinodesHelper(main_node: tuple[int, int], other_nodes: List[tuple[int, int]], width: int, height: int) -> List[tuple[int, int]]:
-    antinodes = []
+def findAntinodesHelper(main_node: Tuple[int, int], other_nodes: List[Tuple[int, int]], width: int, height: int) -> Set[Tuple[int, int]]:
+    antinodes = set()
 
     for node in other_nodes:
         if node == main_node:
@@ -28,90 +27,44 @@ def findAntinodesHelper(main_node: tuple[int, int], other_nodes: List[tuple[int,
         
         diff_x, diff_y = abs(main_node[0] - node[0]), abs(main_node[1] - node[1])
 
-        if main_node[0] < node[0] and main_node[1] < node[1]:
+        match (main_node[0] < node[0], main_node[1] < node[1]):
+            case (True, True):
+                directions = [(-diff_x, -diff_y), (diff_x, diff_y)]
+            case (True, False):
+                directions = [(-diff_x, diff_y), (diff_x, -diff_y)]
+            case (False, True):
+                directions = [(diff_x, -diff_y), (-diff_x, diff_y)]
+            case (False, False):
+                directions = [(diff_x, diff_y), (-diff_x, -diff_y)]
+
+        for dx, dy in directions:
             temp_x, temp_y = main_node[0], main_node[1]
-            while temp_x - diff_x >= 0 and temp_y - diff_y >= 0:
-                antinodes.append((temp_x - diff_x, temp_y - diff_y))
-                temp_x -= diff_x
-                temp_y -= diff_y
+            while 0 <= temp_x + dx < width and 0 <= temp_y + dy < height:
+                temp_x += dx
+                temp_y += dy
+                antinodes.add((temp_x, temp_y))
 
-            temp_x, temp_y = node[0], node[1]
-            while temp_x + diff_x < width and temp_y + diff_y < height:
-                antinodes.append((temp_x + diff_x, temp_y + diff_y))
-                temp_x += diff_x
-                temp_y += diff_y
-
-        elif main_node[0] < node[0] and main_node[1] > node[1]:
-            temp_x, temp_y = main_node[0], main_node[1]
-            while temp_x - diff_x >= 0 and temp_y + diff_y < height:
-                antinodes.append((temp_x - diff_x, temp_y + diff_y))
-                temp_x -= diff_x
-                temp_y += diff_y
-
-            temp_x, temp_y = node[0], node[1]
-            while temp_x + diff_x < width and temp_y - diff_y >= 0:
-                antinodes.append((temp_x + diff_x, temp_y - diff_y))
-                temp_x += diff_x
-                temp_y -= diff_y
-
-        elif main_node[0] > node[0] and main_node[1] < node[1]:
-            temp_x, temp_y = main_node[0], main_node[1]
-            while temp_x + diff_x < width and temp_y - diff_y >= 0:
-                antinodes.append((temp_x + diff_x, temp_y - diff_y))
-                temp_x += diff_x
-                temp_y -= diff_y
-
-            temp_x, temp_y = node[0], node[1]
-            while temp_x - diff_x >= 0 and temp_y + diff_y < height:
-                antinodes.append((temp_x - diff_x, temp_y + diff_y))
-                temp_x -= diff_x
-                temp_y += diff_y
-
-        elif main_node[0] > node[0] and main_node[1] > node[1]:
-            temp_x, temp_y = main_node[0], main_node[1]
-            while temp_x + diff_x < width and temp_y + diff_y < height:
-                antinodes.append((temp_x + diff_x, temp_y + diff_y))
-                temp_x += diff_x
-                temp_y += diff_y
-
-            temp_x, temp_y = node[0], node[1]
-            while temp_x - diff_x >= 0 and temp_y - diff_y >= 0:
-                antinodes.append((temp_x - diff_x, temp_y - diff_y))
-                temp_x -= diff_x
-                temp_y -= diff_y
-
-        print(f"Main Node: {main_node}, Other Node: {node}, Antinodes: {antinodes}")
-
-    # print(f"Main Node: {main_node}, Other Nodes: {other_nodes}, Antinodes: {antinodes}")
     return antinodes
 
-def findAntinodes(parsed_input: Dict[str, List[tuple[int, int]]], height: int, width: int) -> List[tuple[int, int]]:
-    antinodes = []
+def findAntinodes(parsed_input: Dict[str, List[Tuple[int, int]]], height: int, width: int) -> Set[Tuple[int, int]]:
+    antinodes = set()
 
     for key in parsed_input:
         for i, node in enumerate(parsed_input[key]):
             if node not in antinodes:
-              antinodes.append(node)
+                antinodes.add(node)
             if i == len(parsed_input[key]) - 1:
                 break
-            
-            for antinode in findAntinodesHelper(node, parsed_input[key][i+1:], width, height):
-                if antinode not in antinodes:
-                    if 0 <= antinode[0] < width and 0 <= antinode[1] < height:
-                      antinodes.append(antinode)
+
+            antinodes.update(findAntinodesHelper(node, parsed_input[key][i+1:], width, height))
 
     return antinodes
 
 def main():
     input = readInput()
     height, width = len(input), len(input[0])
-    # pprint(input)
-    # print(f'Height: {height}, Width: {width}')
     parsed_input = parseInput(input)
-    # pprint(parsed_input)
     antinodes = findAntinodes(parsed_input, height, width)
-    antinodes.sort()
-    pprint(antinodes)
     print(f"Result: {len(antinodes)}")
 
 if __name__ == "__main__":
