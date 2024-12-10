@@ -59,18 +59,18 @@ func getTrailheads(grid [][]int) []Point {
 	return trailheads
 }
 
-func getScores(grid [][]int, trailheads []Point, f scoreCalculation) []int {
+func getScores(grid [][]int, trailheads []Point, unique bool) []int {
 	scores := []int{}
 
 	for _, trailhead := range trailheads {
-		score := f(grid, trailhead)
+		score := Scores(grid, trailhead, unique)
 		scores = append(scores, len(score))
 	}
 
 	return scores
 }
 
-func uniqueScores(grid [][]int, trailhead Point) []Point {
+func Scores(grid [][]int, trailhead Point, unique bool) []Point {
 	height := grid[trailhead.x][trailhead.y]
 	if height == 9 {
 		return []Point{{trailhead.x, trailhead.y}}
@@ -88,7 +88,12 @@ func uniqueScores(grid [][]int, trailhead Point) []Point {
 		}
 
 		if grid[x][y] == height+1 {
-			for _, trail := range uniqueScores(grid, Point{x, y}) {
+			if !unique {
+				trails = append(trails, Scores(grid, Point{x, y}, unique)...)
+				continue
+			}
+
+			for _, trail := range Scores(grid, Point{x, y}, unique) {
 				check := false
 
 				for _, p := range trails {
@@ -109,34 +114,9 @@ func uniqueScores(grid [][]int, trailhead Point) []Point {
 	return trails
 }
 
-func dupScores(grid [][]int, trailhead Point) []Point {
-	height := grid[trailhead.x][trailhead.y]
-	if height == 9 {
-		return []Point{{trailhead.x, trailhead.y}}
-	}
-
-	trails := []Point{}
-
-	directions := []Point{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
-	for _, direction := range directions {
-		x := trailhead.x + direction.x
-		y := trailhead.y + direction.y
-
-		if x < 0 || x >= len(grid) || y < 0 || y >= len(grid[0]) {
-			continue
-		}
-
-		if grid[x][y] == height+1 {
-			trails = append(trails, dupScores(grid, Point{x, y})...)
-		}
-	}
-
-	return trails
-}
-
 func part1(grid [][]int) int {
 	trailheads := getTrailheads(grid)
-	scores := getScores(grid, trailheads, uniqueScores)
+	scores := getScores(grid, trailheads, true)
 
 	sum := 0
 	for _, score := range scores {
@@ -148,7 +128,7 @@ func part1(grid [][]int) int {
 
 func part2(grid [][]int) int {
 	trailheads := getTrailheads(grid)
-	scores := getScores(grid, trailheads, dupScores)
+	scores := getScores(grid, trailheads, false)
 
 	sum := 0
 	for _, score := range scores {
