@@ -1,6 +1,4 @@
-from typing import List, Set
 import numpy as np
-from pprint import pprint as pprint
 
 def readInput() -> np.array:
     with open("input.txt") as f:
@@ -38,11 +36,8 @@ def getScores(grid: np.array, trailhead: tuple[int, int]) -> int:
 
 def main() -> None:
     grid = readInput()
-    # print(grid)
     trailheads = getTrailheads(grid)
-    # print(trailheads)
     scores = getTrailheadScores(grid, trailheads)
-    # print(scores)
     print(f'Answer: {sum(scores)}')
 
 if __name__ == "__main__":
