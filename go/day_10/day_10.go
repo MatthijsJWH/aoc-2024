@@ -14,8 +14,6 @@ type Point struct {
 	y int
 }
 
-type scoreCalculation func([][]int, Point) []Point
-
 func parseInput(fileName string) [][]int {
 	file, err := os.Open(fileName)
 	if err != nil {
