@@ -9,7 +9,6 @@ def blink(stone: int) -> List[int]:
   
   s = f'{stone}'
   l = len(s)
-  # print(s)
   if l % 2 == 0:
     i, j = s[:l // 2], s[l // 2:]
     return [int(i), int(j)]
@@ -23,7 +22,7 @@ def get_result(stone: int, blinks: int) -> int:
 
 def main():
   input = INPUT
-  print(f'Result: {sum(get_result(n, 75) for n in input)}')
+  print(f'Result: {sum(get_result(n, 25) for n in input)}')
 
 if __name__ == "__main__":
   main()
