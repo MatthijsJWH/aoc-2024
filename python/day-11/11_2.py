@@ -1,10 +1,10 @@
-from multiprocessing.pool import ThreadPool
 from typing import List
 from functools import cache
 
 EXAMPLE_INPUT: List[int] = [125, 17]
 INPUT: List[int] = [64599, 31, 674832, 2659361, 1, 0, 8867, 321]
 
+@cache
 def blink(stone: int) -> List[int]:
   if stone == 0:
     return [1]
